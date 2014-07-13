@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'scraperwiki'
 require 'mechanize'
 require 'nokogiri'
 
