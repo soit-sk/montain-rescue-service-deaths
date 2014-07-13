@@ -22,9 +22,9 @@ end
 
 def parse_line(a)
   line = {
-    :date => parse_date(a[0]) || 'unknown',
+    "date" => parse_date(a[0]) || 'unknown',
   }
-  if line[:date] == 'unknown'
+  if line["date"] == 'unknown'
     i = 0
   else
     i = 1
@@ -51,10 +51,10 @@ def parse_line(a)
   end
 
   line.merge!(
-    :victim => victim,
-    :age => age,
-    :location => location,
-    :accident_information => accident
+    "victim" => victim,
+    "age" => age,
+    "location" => location,
+    "accident_information" => accident
   )
 
   line
@@ -68,16 +68,16 @@ def scrap_statistics
 
     @agent.get(BASE_URL + region_part) do |page|
       page.search('.cms td').each do |item|
-        yield parse_line(item.text.split(',')).merge(:region => region)
+        yield parse_line(item.text.split(',')).merge("region" => region)
       end
     end
   end
 end
 
 def make_uuid(item)
-  "#{item[:date]}-#{item[:victim].downcase.gsub(/\W+/, '-')}"
+  "#{item["date"]}-#{item["victim"].downcase.gsub(/\W+/, '-')}"
 end
 
 scrap_statistics do |item|
-  ScraperWiki.save_sqlite(unique_keys=[:unique_id], data=item.merge(:unique_id => make_uuid(item)), table_name='deaths')
+  ScraperWiki.save_sqlite(unique_keys=["unique_id"], data=item.merge("unique_id" => make_uuid(item)), table_name='deaths')
 end
