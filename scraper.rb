@@ -24,7 +24,7 @@ end
 
 def parse_dash_line(line)
   m1, m2, m3, m4, m5 =
-    line.match(/^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ročn[ýá]+[ -]+([A-Z]{2})[\s-]*(.*)$/).captures
+    line.match(/^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ro.n.[ -]+([A-Z]{2})[\s-]*(.*)$/u).captures
 
   date = parse_date(m1)
   victim = m2.gsub(/ -$/, '')
