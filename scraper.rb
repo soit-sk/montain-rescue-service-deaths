@@ -67,7 +67,7 @@ def scrap_statistics
     region_part = region.downcase.sub(' ', '-')
 
     @agent.get(BASE_URL + region_part) do |page|
-      page.search('.cms td').each do |item|
+      page.search('#table td').each do |item|
         yield parse_line(item.text.split(',')).merge("region" => region)
       end
     end
