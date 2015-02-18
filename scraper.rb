@@ -74,10 +74,6 @@ def scrap_statistics
   end
 end
 
-def make_uuid(item)
-  "#{item["date"]}-#{item["victim"].downcase.gsub(/\W+/, '-')}"
-end
-
 scrap_statistics do |item|
-  ScraperWiki.save_sqlite(unique_keys=["unique_id"], data=item.merge("unique_id" => make_uuid(item)), table_name='deaths')
+  ScraperWiki.save_sqlite(unique_keys=["date", "victim"], data=item, table_name='deaths')
 end
