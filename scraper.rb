@@ -88,7 +88,7 @@ def scrap_statistics
 
     @agent.get(BASE_URL + region_part) do |page|
       page.search('#table td').each do |item|
-        if item.text =~ /,.*,/
+        if item.text =~ /,/
             yield parse_line(item.text.split(',')).merge("region" => region)
         else
             yield parse_dash_line(item.text).merge("region" => region)
