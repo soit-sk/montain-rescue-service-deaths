@@ -20,6 +20,24 @@ def parse_date(date)
   return date if date =~ /pol.*stor/
 end
 
+def parse_dash_line(line)
+  m1, m2, m3, m4, m5 =
+    line.match(/^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ročn[ýá]+[ -]+([A-Z]{2})[\s-]*(.*)$/).captures
+
+  date = parse_date(m1)
+  victim = m2.gsub(/ -$/, '')
+
+  row = {
+    "date" => date,
+    "victim" => victim,
+    "age" => m3,
+    "location" => m4,
+    "accident_information" => m5,
+  }
+
+  return row
+end
+
 def parse_line(a)
   line = {
     "date" => parse_date(a[0]) || 'unknown',
@@ -68,7 +86,11 @@ def scrap_statistics
 
     @agent.get(BASE_URL + region_part) do |page|
       page.search('#table td').each do |item|
-        yield parse_line(item.text.split(',')).merge("region" => region)
+        if item.text =~ /,.*,/
+            yield parse_line(item.text.split(',')).merge("region" => region)
+        else
+            yield parse_dash_line(item.text).merge("region" => region)
+        end
       end
     end
   end
