@@ -5,7 +5,7 @@ require 'scraperwiki'
 require 'mechanize'
 require 'nokogiri'
 
-BASE_URL="http://www.hzs.sk/horska-zachranna-sluzba/smrtelne-nehody-"
+BASE_URL="https://www.hzs.sk/horska-zachranna-sluzba/smrtelne-nehody-"
 
 @agent = Mechanize.new { |agent|
   agent.user_agent_alias = 'Mac Safari'
