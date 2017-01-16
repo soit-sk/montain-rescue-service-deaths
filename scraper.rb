@@ -15,7 +15,7 @@ def parse_date(date)
   date.strip!
   return "#{$1}-unknown" if date =~ /^(\d{4})\-/
   return "#{$3}-#{$2}-#{$1}" if date =~ /^(\d{1,2})\.(\d{1,2})\.(\d{4})/
-  return "#{$1}-#{$2}-#{$3}" if date =~ /^(\d{4}) .{1} (\d{1,2})\.(\d{1,2})\./
+  return "#{$1}-#{$2}-#{$3}" if date =~ /^(\d{4}) ?.{1} ?(\d{1,2})\.(\d{1,2})\.?/
   return "#{$1}-#{$2}-#{$3}" if date =~ /^(\d{4}) \- (\d{1,2})\.(\d{1,2})/
   return "#{$1}-#{$2}-#{$3}" if date =~ /^(\d{4}) \- (\d{1,2})\. (\d{1,2})\./
   return "#{date}-unknown" if date =~ /^(\d{4})/
@@ -23,18 +23,24 @@ def parse_date(date)
 end
 
 def parse_dash_line(line)
-  m1, m2, m3, m4, m5 =
-    line.match(/^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ro.n.[ -]+([A-Z]{2})[\s-]*(.*)$/u).captures
+  m1 = m2 = m3 = m4 = m5 = ''
+  if line =~ /^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ro.n.[ -]+([A-Z]{2})[\s-]*(.*)$/u
+    m1, m2, m3, m4, m5 =
+      line.match(/^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ro.n.[ -]+([A-Z]{2})[\s-]*(.*)$/u).captures
+  else
+    m1, m2, m3, m4, m5 =
+      line.match(/^(\d+\.\d+\.\d+) +([^\d]+) (\d+)r\. +(\S+)\s*(.*)$/u).captures
+  end
 
   date = parse_date(m1)
   victim = m2.gsub(/ -$/, '')
 
   row = {
-    "date" => date,
-    "victim" => victim,
-    "age" => m3,
-    "location" => m4,
-    "accident_information" => m5,
+    "date" => date.strip,
+    "victim" => victim.strip,
+    "age" => m3.strip,
+    "location" => m4.strip,
+    "accident_information" => m5.strip,
   }
 
   return row
