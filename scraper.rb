@@ -27,9 +27,13 @@ def parse_dash_line(line)
   if line =~ /^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ro.n.[ -]+([A-Z]{2})[\s-]*(.*)$/u
     m1, m2, m3, m4, m5 =
       line.match(/^(\d+\.\d+\.\d+)[ -]+([^\d]+)[ -](\d+)[ -]+ro.n.[ -]+([A-Z]{2})[\s-]*(.*)$/u).captures
-  else
+  elsif line =~ /^(\d+\.\d+\.\d+) +([^\d]+) (\d+)r\. +(\S+)\s*(.*)$/u
     m1, m2, m3, m4, m5 =
       line.match(/^(\d+\.\d+\.\d+) +([^\d]+) (\d+)r\. +(\S+)\s*(.*)$/u).captures
+  else
+    m1, m2, m4, m5 =
+      line.match(/^(\d+ \d+\.\d+)\. +(\S+) +(\S+) +(.*)$/u).captures
+    m3 = 'unknown'
   end
 
   date = parse_date(m1)
@@ -86,6 +90,19 @@ def parse_line(a)
   line
 end
 
+def parse_multiple(line, region)
+    # get rid of HTML elements
+    edited_line = line.gsub(/<\/?td>|<\/?p>/, '').gsub(/^\r\n/, '')
+    edited_line.strip
+    lines = edited_line.split('<br>')
+
+    lines.each do |separate_line|
+        row = parse_dash_line(separate_line).merge("region" => region)
+
+        ScraperWiki.save_sqlite(unique_keys=["date", "victim"], data=row, table_name='deaths')
+    end
+end
+
 def scrap_statistics
   locations = ['Vysoke Tatry', 'Nizke Tatry', 'Zapadne Tatry', 'Mala Fatra', 'Velka Fatra', 'Slovensky Raj']
 
@@ -94,7 +111,9 @@ def scrap_statistics
 
     @agent.get(BASE_URL + region_part) do |page|
       page.search('#table td').each do |item|
-        if item.text =~ /,/
+        if item.to_s =~ /<br>/
+            parse_multiple(item.to_s, region)
+        elsif item.text =~ /,/
             yield parse_line(item.text.split(',')).merge("region" => region)
         else
             yield parse_dash_line(item.text).merge("region" => region)
