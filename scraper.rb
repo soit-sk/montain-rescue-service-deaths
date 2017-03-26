@@ -30,6 +30,9 @@ def parse_dash_line(line)
   elsif line =~ /^(\d+\.\d+\.\d+) +([^\d]+) (\d+)r\. +(\S+)\s*(.*)$/u
     m1, m2, m3, m4, m5 =
       line.match(/^(\d+\.\d+\.\d+) +([^\d]+) (\d+)r\. +(\S+)\s*(.*)$/u).captures
+  elsif line =~ /^(\d+\.\d+\.\d+)[ –]+([^\d]+)\s*nar.(\d+\.\d+\.\d+)[ –-]+([A-Z]{2})[\s–]*(.*)$/u
+    m1, m2, m3, m4, m5 =
+      line.match(/^(\d+\.\d+\.\d+)[ –]+([^\d]+)\s*nar.(\d+\.\d+\.\d+)[ –-]+([A-Z]{2})[\s–]*(.*)$/u).captures
   else
     m1, m2, m4, m5 =
       line.match(/^(\d+ \d+\.\d+)\. +(\S+) +(\S+) +(.*)$/u).captures
