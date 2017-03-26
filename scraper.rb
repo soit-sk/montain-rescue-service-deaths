@@ -95,7 +95,7 @@ end
 
 def parse_multiple(line, region)
     # get rid of HTML elements
-    edited_line = line.gsub(/<\/?td>|<\/?p>/, '').gsub(/^\r\n/, '')
+    edited_line = line.gsub(/<\/?td>|<\/?p>|<\/?span>/, '').gsub(/^\r\n/, '')
     edited_line.strip
     lines = edited_line.split('<br>')
 
