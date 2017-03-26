@@ -97,7 +97,14 @@ def parse_multiple(line, region)
     lines = edited_line.split('<br>')
 
     lines.each do |separate_line|
-        row = parse_dash_line(separate_line).merge("region" => region)
+        row = ''
+        if separate_line =~ /,/
+            row = parse_line(separate_line.split(',')).merge("region" => region)
+        elsif separate_line =~ /^\s*$/
+            return
+        else
+            row = parse_dash_line(separate_line).merge("region" => region)
+        end
 
         ScraperWiki.save_sqlite(unique_keys=["date", "victim"], data=row, table_name='deaths')
     end
